@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强势英雄与阵容搭配 - 无畏契约百科</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 页面特定样式 */
+        .tier-section {
+            padding: 3rem 0;
+        }
+        .tier-section:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+        .tier-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .tier-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: white;
+        }
+        .tier-badge.s-tier {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .tier-badge.a-tier {
+            background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+        }
+        .tier-title {
+            font-size: 1.75rem;
+            font-weight: 900;
+        }
+        .tier-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Meta卡片样式 */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .meta-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .meta-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .meta-card.s-tier {
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        .meta-card.s-tier:hover {
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.15);
+        }
+        .meta-card.a-tier {
+            border: 2px solid rgba(192, 192, 192, 0.3);
+        }
+        .meta-card.a-tier:hover {
+            border-color: rgba(192, 192, 192, 0.6);
+            box-shadow: 0 8px 32px rgba(192, 192, 192, 0.1);
+        }
+        .meta-image-container {
+            height: 280px;
+            background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-card) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .meta-image-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, var(--bg-card) 0%, transparent 30%);
+            z-index: 1;
+        }
+        .meta-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            transition: transform 0.3s;
+        }
+        .meta-card:hover .meta-image {
+            transform: scale(1.05);
+        }
+        .tier-label {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+        .tier-label.s-tier {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #1a1a1a;
+        }
+        .tier-label.a-tier {
+            background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+            color: #1a1a1a;
+        }
+        .meta-info {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .meta-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+        .meta-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* 阵容推荐样式 */
+        .comps-section {
+            padding: 3rem 0;
+            background: var(--bg-secondary);
+        }
+        .comps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .comp-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .comp-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255,70,85,0.2);
+        }
+        .comp-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .comp-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .comp-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .comp-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .comp-agents {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .comp-agent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .comp-agent img {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .comp-agent.duelist img { border-color: var(--duelist); }
+        .comp-agent.controller img { border-color: var(--controller); }
+        .comp-agent.initiator img { border-color: var(--initiator); }
+        .comp-agent.sentinel img { border-color: var(--sentinel); }
+        .comp-agent span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .comp-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* 职业选手推荐 */
+        .pro-section {
+            padding: 3rem 0;
+        }
+        .pro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .pro-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .pro-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255,70,85,0.2);
+        }
+        .pro-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .pro-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .pro-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .pro-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .pro-picks {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .pro-pick {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+        .pro-pick img {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .meta-grid, .comps-grid, .pro-grid {
+                grid-template-columns: 1fr;
+            }
+            .comp-agents {
+                justify-content: center;
+            }
+            .tier-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">VALORANT WIKI</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="agents.html">英雄</a></li>
+                <li><a href="maps.html">地图</a></li>
+                <li><a href="weapons.html">武器</a></li>
+                <li><a href="meta.html" class="active">强势英雄</a></li>
+                <li><a href="edg-champion.html">EDG夺冠</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面头部 -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">强势英雄与阵容搭配</h1>
+            <p class="page-subtitle">当前版本最强特工推荐与职业级阵容搭配策略</p>
+        </div>
+    </header>
+
+    <!-- S级特工 -->
+    <section class="tier-section">
+        <div class="container">
+            <div class="tier-header">
+                <div class="tier-badge s-tier">S</div>
+                <div>
+                    <h2 class="tier-title">S级特工</h2>
+                    <p class="tier-subtitle">版本最强，优先级最高</p>
+                </div>
+            </div>
+            <div class="meta-grid">
+                <!-- ISO -->
+                <div class="meta-card s-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/iso.png" alt="ISO" class="meta-image">
+                        <span class="tier-label s-tier">S级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">ISO</h3>
+                            <span class="role-badge duelist">决斗者</span>
+                        </div>
+                        <p class="meta-description">护盾机制让他在对枪中占据绝对优势，大招单挑能力极强，是当前版本最强势的决斗者。</p>
+                    </div>
+                </div>
+
+                <!-- 斯凯 -->
+                <div class="meta-card s-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/skye.png" alt="斯凯" class="meta-image">
+                        <span class="tier-label s-tier">S级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">斯凯</h3>
+                            <span class="role-badge initiator">先锋</span>
+                        </div>
+                        <p class="meta-description">集侦察、闪光、治疗于一身的全能先锋，团队贡献极高，是职业赛场的热门选择。</p>
+                    </div>
+                </div>
+
+                <!-- 幽影 -->
+                <div class="meta-card s-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/omen.png" alt="幽影" class="meta-image">
+                        <span class="tier-label s-tier">S级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">幽影</h3>
+                            <span class="role-badge controller">控场者</span>
+                        </div>
+                        <p class="meta-description">传送机制灵活多变，全局烟雾支援能力强大，是控场者位置的不二之选。</p>
+                    </div>
+                </div>
+
+                <!-- 奇乐 -->
+                <div class="meta-card s-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/killjoy.png" alt="奇乐" class="meta-image">
+                        <span class="tier-label s-tier">S级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">奇乐</h3>
+                            <span class="role-badge sentinel">守卫</span>
+                        </div>
+                        <p class="meta-description">强大的区域控制能力，炮塔和纳米蜂群能有效阻止敌人推进，防守方首选。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- A级特工 -->
+    <section class="tier-section">
+        <div class="container">
+            <div class="tier-header">
+                <div class="tier-badge a-tier">A</div>
+                <div>
+                    <h2 class="tier-title">A级特工</h2>
+                    <p class="tier-subtitle">强势可用，根据阵容选择</p>
+                </div>
+            </div>
+            <div class="meta-grid">
+                <!-- 捷风 -->
+                <div class="meta-card a-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/jett.png" alt="捷风" class="meta-image">
+                        <span class="tier-label a-tier">A级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">捷风</h3>
+                            <span class="role-badge duelist">决斗者</span>
+                        </div>
+                        <p class="meta-description">机动性极强的决斗者，擅长使用狙击枪和突袭战术，高手向角色。</p>
+                    </div>
+                </div>
+
+                <!-- 芮娜 -->
+                <div class="meta-card a-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/reyna.png" alt="芮娜" class="meta-image">
+                        <span class="tier-label a-tier">A级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">芮娜</h3>
+                            <span class="role-badge duelist">决斗者</span>
+                        </div>
+                        <p class="meta-description">击杀后获得治疗和无敌，适合枪法精准的玩家单排carry。</p>
+                    </div>
+                </div>
+
+                <!-- 猎枭 -->
+                <div class="meta-card a-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/sova.png" alt="猎枭" class="meta-image">
+                        <span class="tier-label a-tier">A级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">猎枭</h3>
+                            <span class="role-badge initiator">先锋</span>
+                        </div>
+                        <p class="meta-description">侦察箭和无人机提供强大的信息获取能力，是战术配合的核心。</p>
+                    </div>
+                </div>
+
+                <!-- 蝰蛇 -->
+                <div class="meta-card a-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/viper.png" alt="蝰蛇" class="meta-image">
+                        <span class="tier-label a-tier">A级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">蝰蛇</h3>
+                            <span class="role-badge controller">控场者</span>
+                        </div>
+                        <p class="meta-description">毒幕和毒云能长时间控制区域，在特定地图上有极强的统治力。</p>
+                    </div>
+                </div>
+
+                <!-- 贤者 -->
+                <div class="meta-card a-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/sage.png" alt="贤者" class="meta-image">
+                        <span class="tier-label a-tier">A级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">贤者</h3>
+                            <span class="role-badge sentinel">守卫</span>
+                        </div>
+                        <p class="meta-description">复活和治疗能力独特，冰墙能创造战术优势，团队辅助首选。</p>
+                    </div>
+                </div>
+
+                <!-- 雷兹 -->
+                <div class="meta-card a-tier">
+                    <div class="meta-image-container">
+                        <img src="images/agents/raze.png" alt="雷兹" class="meta-image">
+                        <span class="tier-label a-tier">A级</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="meta-header">
+                            <h3 class="meta-name">雷兹</h3>
+                            <span class="role-badge duelist">决斗者</span>
+                        </div>
+                        <p class="meta-description">爆破包提供高机动性，手雷和重炮伤害可观，进攻型决斗者。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 推荐阵容搭配 -->
+    <section class="comps-section">
+        <div class="container">
+            <div class="tier-header">
+                <div class="tier-badge" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                    <span style="font-size: 1.5rem;">⚔️</span>
+                </div>
+                <div>
+                    <h2 class="tier-title">推荐阵容搭配</h2>
+                    <p class="tier-subtitle">职业级战术阵容推荐</p>
+                </div>
+            </div>
+            <div class="comps-grid">
+                <!-- 阵容1：均衡型 -->
+                <div class="comp-card">
+                    <div class="comp-header">
+                        <div class="comp-icon">⚖️</div>
+                        <div>
+                            <h3 class="comp-title">均衡型阵容</h3>
+                            <p class="comp-subtitle">攻守兼备，适合大多数地图</p>
+                        </div>
+                    </div>
+                    <div class="comp-agents">
+                        <div class="comp-agent duelist">
+                            <img src="images/agents/iso.png" alt="ISO">
+                            <span>ISO</span>
+                        </div>
+                        <div class="comp-agent duelist">
+                            <img src="images/agents/jett.png" alt="捷风">
+                            <span>捷风</span>
+                        </div>
+                        <div class="comp-agent initiator">
+                            <img src="images/agents/skye.png" alt="斯凯">
+                            <span>斯凯</span>
+                        </div>
+                        <div class="comp-agent controller">
+                            <img src="images/agents/omen.png" alt="幽影">
+                            <span>幽影</span>
+                        </div>
+                        <div class="comp-agent sentinel">
+                            <img src="images/agents/killjoy.png" alt="奇乐">
+                            <span>奇乐</span>
+                        </div>
+                    </div>
+                    <p class="comp-description">双决斗者提供火力输出，斯凯提供信息和治疗，幽影控场，奇乐防守。这套阵容攻守均衡，适合各种地图和打法。</p>
+                </div>
+
+                <!-- 阵容2：快攻型 -->
+                <div class="comp-card">
+                    <div class="comp-header">
+                        <div class="comp-icon">⚡</div>
+                        <div>
+                            <h3 class="comp-title">快攻型阵容</h3>
+                            <p class="comp-subtitle">快速突破，闪电战打法</p>
+                        </div>
+                    </div>
+                    <div class="comp-agents">
+                        <div class="comp-agent duelist">
+                            <img src="images/agents/iso.png" alt="ISO">
+                            <span>ISO</span>
+                        </div>
+                        <div class="comp-agent duelist">
+                            <img src="images/agents/raze.png" alt="雷兹">
+                            <span>雷兹</span>
+                        </div>
+                        <div class="comp-agent initiator">
+                            <img src="images/agents/sova.png" alt="猎枭">
+                            <span>猎枭</span>
+                        </div>
+                        <div class="comp-agent controller">
+                            <img src="images/agents/omen.png" alt="幽影">
+                            <span>幽影</span>
+                        </div>
+                        <div class="comp-agent sentinel">
+                            <img src="images/agents/sage.png" alt="贤者">
+                            <span>贤者</span>
+                        </div>
+                    </div>
+                    <p class="comp-description">ISO和雷兹双突进，配合猎枭的侦察箭快速获取信息，幽影提供烟雾掩护，贤者负责治疗和复活。适合快速进攻节奏。</p>
+                </div>
+
+                <!-- 阵容3：控制型 -->
+                <div class="comp-card">
+                    <div class="comp-header">
+                        <div class="comp-icon">🛡️</div>
+                        <div>
+                            <h3 class="comp-title">控制型阵容</h3>
+                            <p class="comp-subtitle">稳扎稳打，区域控制</p>
+                        </div>
+                    </div>
+                    <div class="comp-agents">
+                        <div class="comp-agent duelist">
+                            <img src="images/agents/iso.png" alt="ISO">
+                            <span>ISO</span>
+                        </div>
+                        <div class="comp-agent initiator">
+                            <img src="images/agents/skye.png" alt="斯凯">
+                            <span>斯凯</span>
+                        </div>
+                        <div class="comp-agent controller">
+                            <img src="images/agents/viper.png" alt="蝰蛇">
+                            <span>蝰蛇</span>
+                        </div>
+                        <div class="comp-agent controller">
+                            <img src="images/agents/omen.png" alt="幽影">
+                            <span>幽影</span>
+                        </div>
+                        <div class="comp-agent sentinel">
+                            <img src="images/agents/killjoy.png" alt="奇乐">
+                            <span>奇乐</span>
+                        </div>
+                    </div>
+                    <p class="comp-description">双控场者提供强大的区域控制能力，斯凯提供信息和辅助，ISO单点突破，奇乐稳固防守。适合慢节奏、重配合的打法。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 职业选手推荐 -->
+    <section class="pro-section">
+        <div class="container">
+            <div class="tier-header">
+                <div class="tier-badge" style="background: linear-gradient(135deg, #ff4655 0%, #ff6b7a 100%);">
+                    <span style="font-size: 1.5rem;">🏆</span>
+                </div>
+                <div>
+                    <h2 class="tier-title">EDG职业选手推荐</h2>
+                    <p class="tier-subtitle">2024首尔全球冠军赛冠军阵容</p>
+                </div>
+            </div>
+            <div class="pro-grid">
+                <!-- ZmjjKK -->
+                <div class="pro-card">
+                    <div class="pro-header">
+                        <div class="pro-avatar">康</div>
+                        <div class="pro-info">
+                            <h3>ZmjjKK</h3>
+                            <p>EDG决斗者 | 冠军赛MVP</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">以激进的打法和精准的枪法著称，是EDG的核心输出点。</p>
+                    <div class="pro-picks">
+                        <div class="pro-pick">
+                            <img src="images/agents/iso.png" alt="ISO">
+                            <span>ISO</span>
+                        </div>
+                        <div class="pro-pick">
+                            <img src="images/agents/jett.png" alt="捷风">
+                            <span>捷风</span>
+                        </div>
+                        <div class="pro-pick">
+                            <img src="images/agents/raze.png" alt="雷兹">
+                            <span>雷兹</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHICHOO -->
+                <div class="pro-card">
+                    <div class="pro-header">
+                        <div class="pro-avatar">球</div>
+                        <div class="pro-info">
+                            <h3>CHICHOO</h3>
+                            <p>EDG控场者 | 残局大师</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">冷静的头脑和出色的残局处理能力，关键时刻的稳定发挥。</p>
+                    <div class="pro-picks">
+                        <div class="pro-pick">
+                            <img src="images/agents/omen.png" alt="幽影">
+                            <span>幽影</span>
+                        </div>
+                        <div class="pro-pick">
+                            <img src="images/agents/viper.png" alt="蝰蛇">
+                            <span>蝰蛇</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- nobody -->
+                <div class="pro-card">
+                    <div class="pro-header">
+                        <div class="pro-avatar">王</div>
+                        <div class="pro-info">
+                            <h3>nobody</h3>
+                            <p>EDG先锋 | 信息核心</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">精准的侦察箭和出色的团队配合意识，为队伍提供关键信息。</p>
+                    <div class="pro-picks">
+                        <div class="pro-pick">
+                            <img src="images/agents/skye.png" alt="斯凯">
+                            <span>斯凯</span>
+                        </div>
+                        <div class="pro-pick">
+                            <img src="images/agents/sova.png" alt="猎枭">
+                            <span>猎枭</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smoggy -->
+                <div class="pro-card">
+                    <div class="pro-header">
+                        <div class="pro-avatar">钊</div>
+                        <div class="pro-info">
+                            <h3>Smoggy</h3>
+                            <p>EDG守卫 | 全能选手</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">枪法稳健，能胜任多个位置，是队伍的多面手。</p>
+                    <div class="pro-picks">
+                        <div class="pro-pick">
+                            <img src="images/agents/killjoy.png" alt="奇乐">
+                            <span>奇乐</span>
+                        </div>
+                        <div class="pro-pick">
+                            <img src="images/agents/sage.png" alt="贤者">
+                            <span>贤者</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S1Mon -->
+                <div class="pro-card">
+                    <div class="pro-header">
+                        <div class="pro-avatar">S</div>
+                        <div class="pro-info">
+                            <h3>S1Mon</h3>
+                            <p>EDG决斗者 | 突破手</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">敢打敢拼的突破手，为队伍打开局面的关键人物。</p>
+                    <div class="pro-picks">
+                        <div class="pro-pick">
+                            <img src="images/agents/iso.png" alt="ISO">
+                            <span>ISO</span>
+                        </div>
+                        <div class="pro-pick">
+                            <img src="images/agents/reyna.png" alt="芮娜">
+                            <span>芮娜</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer style="background: var(--bg-secondary); padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div style="text-align: center;">
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">制作人：粥粥</p>
+                <p style="color: var(--text-secondary);">📱 电话: 13728997226 | 💬 微信: lzg805902</p>
+                <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.875rem;">© 2024 无畏契约百科 | 本网站为玩家自制，非官方网站</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

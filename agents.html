@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特工介绍 - 无畏契约百科</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 页面特定样式 */
+        .filter-section {
+            padding: 2rem 0;
+            background: var(--bg-primary);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .filter-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        .filter-btn.active {
+            color: white;
+        }
+        .filter-btn.all.active { background: var(--primary); border-color: var(--primary); }
+        .filter-btn.duelist.active { background: var(--duelist); border-color: var(--duelist); }
+        .filter-btn.controller.active { background: var(--controller); border-color: var(--controller); }
+        .filter-btn.initiator.active { background: var(--initiator); border-color: var(--initiator); }
+        .filter-btn.sentinel.active { background: var(--sentinel); border-color: var(--sentinel); }
+
+        /* 特工卡片增强样式 */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+        .agent-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .agent-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .agent-card.hidden {
+            display: none;
+        }
+        .agent-image-container {
+            height: 380px;
+            background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-card) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .agent-image-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, var(--bg-card) 0%, transparent 30%);
+            z-index: 1;
+        }
+        .agent-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            transition: transform 0.3s;
+        }
+        .agent-card:hover .agent-image {
+            transform: scale(1.05);
+        }
+        .agent-info {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .agent-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+        .agent-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            min-height: 3em;
+        }
+        .abilities-section {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem;
+        }
+        .abilities-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .ability {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .ability img {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+            padding: 4px;
+            transition: all 0.2s;
+        }
+        .ability:hover img {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+        .ability-key {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .agents-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 2rem 0;
+            }
+            .agent-image-container {
+                height: 300px;
+            }
+            .filter-container {
+                gap: 0.5rem;
+            }
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">VALORANT WIKI</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="agents.html" class="active">英雄</a></li>
+                <li><a href="maps.html">地图</a></li>
+                <li><a href="weapons.html">武器</a></li>
+                <li><a href="meta.html">强势英雄</a></li>
+                <li><a href="edg-champion.html">EDG夺冠</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面头部 -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">特工介绍</h1>
+            <p class="page-subtitle">了解所有27位特工的技能、定位与玩法策略</p>
+        </div>
+    </header>
+
+    <!-- 筛选按钮 -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-container">
+                <button class="filter-btn all active" data-filter="all">全部</button>
+                <button class="filter-btn duelist" data-filter="duelist">决斗者</button>
+                <button class="filter-btn controller" data-filter="controller">控场者</button>
+                <button class="filter-btn initiator" data-filter="initiator">先锋</button>
+                <button class="filter-btn sentinel" data-filter="sentinel">守卫</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特工卡片网格 -->
+    <section class="container">
+        <div class="agents-grid" id="agentsGrid">
+            
+            <!-- 决斗者 Duelists -->
+            <!-- 捷风 Jett -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/jett.png" alt="捷风" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">捷风</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自韩国的决斗者，擅长使用风之力量进行快速移动和精准击杀。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/jett_q0.png" alt="漂移">
+                                <span class="ability-key">漂移</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/jett_q1.png" alt="疾风">
+                                <span class="ability-key">疾风</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/jett_q2.png" alt="烟雾">
+                                <span class="ability-key">烟雾</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/jett_q3.png" alt="刀锋">
+                                <span class="ability-key">刀锋</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 芮娜 Reyna -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/reyna.png" alt="芮娜" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">芮娜</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自墨西哥的吸血鬼女王，通过击杀敌人获得生命恢复和无敌状态。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/reyna_q0.png" alt="噬魂">
+                                <span class="ability-key">噬魂</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/reyna_q1.png" alt="暗翳">
+                                <span class="ability-key">暗翳</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/reyna_q2.png" alt="女皇">
+                                <span class="ability-key">女皇</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/reyna_q3.png" alt=" dismiss">
+                                <span class="ability-key"> dismiss</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 雷兹 Raze -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/raze.png" alt="雷兹" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">雷兹</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自巴西的爆破专家，使用各种爆炸物制造混乱并清除敌人。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/raze_q0.png" alt="花车">
+                                <span class="ability-key">花车</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/raze_q1.png" alt="炸药">
+                                <span class="ability-key">炸药</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/raze_q2.png" alt="手雷">
+                                <span class="ability-key">手雷</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/raze_q3.png" alt="重炮">
+                                <span class="ability-key">重炮</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 不死鸟 Phoenix -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/phoenix.png" alt="不死鸟" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">不死鸟</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自英国的火焰操控者，能够使用火焰治愈自己并创造视野阻挡。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/phoenix_q0.png" alt="烈焰">
+                                <span class="ability-key">烈焰</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/phoenix_q1.png" alt="火墙">
+                                <span class="ability-key">火墙</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/phoenix_q2.png" alt="闪光">
+                                <span class="ability-key">闪光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/phoenix_q3.png" alt="重生">
+                                <span class="ability-key">重生</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 夜露 Yoru -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/yoru.png" alt="夜露" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">夜露</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自日本的维度行者，能够穿越维度进行偷袭和逃脱。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/yoru_q0.png" alt="假身">
+                                <span class="ability-key">假身</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/yoru_q1.png" alt="闪光">
+                                <span class="ability-key">闪光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/yoru_q2.png" alt="传送">
+                                <span class="ability-key">传送</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/yoru_q3.png" alt="维度">
+                                <span class="ability-key">维度</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 霓虹 Neon -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/neon.png" alt="霓虹" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">霓虹</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自菲律宾的速度型决斗者，能够以闪电般的速度冲刺和滑行。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/neon_q0.png" alt="充能">
+                                <span class="ability-key">充能</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/neon_q1.png" alt="冲刺">
+                                <span class="ability-key">冲刺</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/neon_q2.png" alt="滑铲">
+                                <span class="ability-key">滑铲</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/neon_q3.png" alt="射线">
+                                <span class="ability-key">射线</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ISO -->
+            <div class="agent-card" data-role="duelist">
+                <div class="agent-image-container">
+                    <img src="images/agents/iso.png" alt="ISO" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">ISO</h3>
+                        <span class="role-badge duelist">决斗者</span>
+                    </div>
+                    <p class="agent-description">来自中国的孤狼特工，能够创造护盾并在单挑中获得优势。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/iso_q0.png" alt="护盾">
+                                <span class="ability-key">护盾</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/iso_q1.png" alt="裂隙">
+                                <span class="ability-key">裂隙</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/iso_q2.png" alt="屏障">
+                                <span class="ability-key">屏障</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/iso_q3.png" alt="领域">
+                                <span class="ability-key">领域</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控场者 Controllers -->
+            <!-- 炼狱 Brimstone -->
+            <div class="agent-card" data-role="controller">
+                <div class="agent-image-container">
+                    <img src="images/agents/brimstone.png" alt="炼狱" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">炼狱</h3>
+                        <span class="role-badge controller">控场者</span>
+                    </div>
+                    <p class="agent-description">来自美国的老兵指挥官，使用烟雾弹和轨道打击控制战场。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/brimstone_q0.png" alt="信标">
+                                <span class="ability-key">信标</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/brimstone_q1.png" alt="烟雾">
+                                <span class="ability-key">烟雾</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/brimstone_q2.png" alt="燃烧">
+                                <span class="ability-key">燃烧</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/brimstone_q3.png" alt="打击">
+                                <span class="ability-key">打击</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 幽影 Omen -->
+            <div class="agent-card" data-role="controller">
+                <div class="agent-image-container">
+                    <img src="images/agents/omen.png" alt="幽影" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">幽影</h3>
+                        <span class="role-badge controller">控场者</span>
+                    </div>
+                    <p class="agent-description">神秘的暗影操控者，能够传送和制造全局视野阻挡。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/omen_q0.png" alt="暗影">
+                                <span class="ability-key">暗影</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/omen_q1.png" alt="黑瘴">
+                                <span class="ability-key">黑瘴</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/omen_q2.png" alt="传送">
+                                <span class="ability-key">传送</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/omen_q3.png" alt="恐惧">
+                                <span class="ability-key">恐惧</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 蝰蛇 Viper -->
+            <div class="agent-card" data-role="controller">
+                <div class="agent-image-container">
+                    <img src="images/agents/viper.png" alt="蝰蛇" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">蝰蛇</h3>
+                        <span class="role-badge controller">控场者</span>
+                    </div>
+                    <p class="agent-description">来自美国的化学家，使用剧毒气体控制区域并削弱敌人。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/viper_q0.png" alt="毒幕">
+                                <span class="ability-key">毒幕</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/viper_q1.png" alt="毒云">
+                                <span class="ability-key">毒云</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/viper_q2.png" alt="毒液">
+                                <span class="ability-key">毒液</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/viper_q3.png" alt="毒池">
+                                <span class="ability-key">毒池</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 亚星卓 Astra -->
+            <div class="agent-card" data-role="controller">
+                <div class="agent-image-container">
+                    <img src="images/agents/astra.png" alt="亚星卓" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">亚星卓</h3>
+                        <span class="role-badge controller">控场者</span>
+                    </div>
+                    <p class="agent-description">来自加纳的宇宙能量操控者，能够放置星体进行全局控制。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/astra_q0.png" alt="星云">
+                                <span class="ability-key">星云</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/astra_q1.png" alt="脉冲">
+                                <span class="ability-key">脉冲</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/astra_q2.png" alt="引力">
+                                <span class="ability-key">引力</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/astra_q3.png" alt="星界">
+                                <span class="ability-key">星界</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 海神 Harbor -->
+            <div class="agent-card" data-role="controller">
+                <div class="agent-image-container">
+                    <img src="images/agents/harbor.png" alt="海神" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">海神</h3>
+                        <span class="role-badge controller">控场者</span>
+                    </div>
+                    <p class="agent-description">来自印度的水元素操控者，使用水墙和潮汐控制战场。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/harbor_q0.png" alt="水墙">
+                                <span class="ability-key">水墙</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/harbor_q1.png" alt="护盾">
+                                <span class="ability-key">护盾</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/harbor_q2.png" alt="浪潮">
+                                <span class="ability-key">浪潮</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/harbor_q3.png" alt="洪流">
+                                <span class="ability-key">洪流</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 暮蝶 Clove -->
+            <div class="agent-card" data-role="controller">
+                <div class="agent-image-container">
+                    <img src="images/agents/clove.png" alt="暮蝶" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">暮蝶</h3>
+                        <span class="role-badge controller">控场者</span>
+                    </div>
+                    <p class="agent-description">来自苏格兰的不朽者，能够死后继续施放技能并复活。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/clove_q0.png" alt="烟雾">
+                                <span class="ability-key">烟雾</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/clove_q1.png" alt="窃取">
+                                <span class="ability-key">窃取</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/clove_q2.png" alt="不朽">
+                                <span class="ability-key">不朽</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/clove_q3.png" alt="重生">
+                                <span class="ability-key">重生</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 先锋 Initiators -->
+            <!-- 猎枭 Sova -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/sova.png" alt="猎枭" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">猎枭</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自俄罗斯的弓箭手，使用侦察箭和无人机获取敌人情报。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/sova_q0.png" alt="侦察">
+                                <span class="ability-key">侦察</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/sova_q1.png" alt="无人机">
+                                <span class="ability-key">无人机</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/sova_q2.png" alt="震荡">
+                                <span class="ability-key">震荡</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/sova_q3.png" alt="猎杀">
+                                <span class="ability-key">猎杀</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 铁臂 Breach -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/breach.png" alt="铁臂" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">铁臂</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自瑞典的生化改造人，使用地震波穿透墙壁攻击敌人。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/breach_q0.png" alt="余震">
+                                <span class="ability-key">余震</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/breach_q1.png" alt="闪光">
+                                <span class="ability-key">闪光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/breach_q2.png" alt="震荡">
+                                <span class="ability-key">震荡</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/breach_q3.png" alt="裂地">
+                                <span class="ability-key">裂地</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 斯凯 Skye -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/skye.png" alt="斯凯" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">斯凯</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自澳大利亚的自然守护者，使用野兽伙伴进行侦察和治疗。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/skye_q0.png" alt="追猎">
+                                <span class="ability-key">追猎</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/skye_q1.png" alt="闪光">
+                                <span class="ability-key">闪光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/skye_q2.png" alt="治疗">
+                                <span class="ability-key">治疗</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/skye_q3.png" alt="狼群">
+                                <span class="ability-key">狼群</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KAY/O -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/kayo.png" alt="KAY/O" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">KAY/O</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自未来的战争机器，能够抑制敌人技能并造成范围伤害。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/kayo_q0.png" alt="闪光">
+                                <span class="ability-key">闪光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/kayo_q1.png" alt="碎片">
+                                <span class="ability-key">碎片</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/kayo_q2.png" alt="抑制">
+                                <span class="ability-key">抑制</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/kayo_q3.png" alt="超载">
+                                <span class="ability-key">超载</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 盖可 Gekko -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/gekko.png" alt="盖可" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">盖可</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自洛杉矶的怪物驯养师，使用可爱的怪物伙伴进行侦察和控场。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/gekko_q0.png" alt="翼龙">
+                                <span class="ability-key">翼龙</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/gekko_q1.png" alt="莫希">
+                                <span class="ability-key">莫希</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/gekko_q2.png" alt="爆炸">
+                                <span class="ability-key">爆炸</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/gekko_q3.png" alt=" thrash">
+                                <span class="ability-key"> thrash</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 黑梦 Fade -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/fade.png" alt="黑梦" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">黑梦</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自土耳其的噩梦猎人，使用恐惧力量揭示敌人位置。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/fade_q0.png" alt="束缚">
+                                <span class="ability-key">束缚</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/fade_q1.png" alt="黑眼">
+                                <span class="ability-key">黑眼</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/fade_q2.png" alt="惊扰">
+                                <span class="ability-key">惊扰</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/fade_q3.png" alt="噩梦">
+                                <span class="ability-key">噩梦</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 钛狐 Tejo -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/tejo.png" alt="钛狐" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">钛狐</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自哥伦比亚的军械专家，使用制导武器进行精确打击。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/tejo_q0.png" alt="信标">
+                                <span class="ability-key">信标</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/tejo_q1.png" alt="制导">
+                                <span class="ability-key">制导</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/tejo_q2.png" alt="震荡">
+                                <span class="ability-key">震荡</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/tejo_q3.png" alt="空袭">
+                                <span class="ability-key">空袭</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 维斯 Waylay -->
+            <div class="agent-card" data-role="initiator">
+                <div class="agent-image-container">
+                    <img src="images/agents/waylay.png" alt="维斯" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">维斯</h3>
+                        <span class="role-badge initiator">先锋</span>
+                    </div>
+                    <p class="agent-description">来自新加坡的光能操控者，使用光之力量进行快速移动和闪光。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/waylay_q0.png" alt="闪光">
+                                <span class="ability-key">闪光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/waylay_q1.png" alt="冲刺">
+                                <span class="ability-key">冲刺</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/waylay_q2.png" alt="光刃">
+                                <span class="ability-key">光刃</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/waylay_q3.png" alt="重构">
+                                <span class="ability-key">重构</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 守卫 Sentinels -->
+            <!-- 零 Cypher -->
+            <div class="agent-card" data-role="sentinel">
+                <div class="agent-image-container">
+                    <img src="images/agents/cypher.png" alt="零" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">零</h3>
+                        <span class="role-badge sentinel">守卫</span>
+                    </div>
+                    <p class="agent-description">来自摩洛哥的情报专家，使用摄像头和绊线监控战场。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/cypher_q0.png" alt="绊线">
+                                <span class="ability-key">绊线</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/cypher_q1.png" alt="牢笼">
+                                <span class="ability-key">牢笼</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/cypher_q2.png" alt="摄像头">
+                                <span class="ability-key">摄像头</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/cypher_q3.png" alt="神经">
+                                <span class="ability-key">神经</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 贤者 Sage -->
+            <div class="agent-card" data-role="sentinel">
+                <div class="agent-image-container">
+                    <img src="images/agents/sage.png" alt="贤者" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">贤者</h3>
+                        <span class="role-badge sentinel">守卫</span>
+                    </div>
+                    <p class="agent-description">来自中国的治愈者，能够治疗队友、复活盟友并制造冰墙。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/sage_q0.png" alt="缓速">
+                                <span class="ability-key">缓速</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/sage_q1.png" alt="冰墙">
+                                <span class="ability-key">冰墙</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/sage_q2.png" alt="治疗">
+                                <span class="ability-key">治疗</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/sage_q3.png" alt="复活">
+                                <span class="ability-key">复活</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 奇乐 Killjoy -->
+            <div class="agent-card" data-role="sentinel">
+                <div class="agent-image-container">
+                    <img src="images/agents/killjoy.png" alt="奇乐" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">奇乐</h3>
+                        <span class="role-badge sentinel">守卫</span>
+                    </div>
+                    <p class="agent-description">来自德国的天才发明家，使用各种机器人守卫区域。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/killjoy_q0.png" alt="警报">
+                                <span class="ability-key">警报</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/killjoy_q1.png" alt="炮塔">
+                                <span class="ability-key">炮塔</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/killjoy_q2.png" alt="纳米">
+                                <span class="ability-key">纳米</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/killjoy_q3.png" alt="封锁">
+                                <span class="ability-key">封锁</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 尚勃勒 Chamber -->
+            <div class="agent-card" data-role="sentinel">
+                <div class="agent-image-container">
+                    <img src="images/agents/chamber.png" alt="尚勃勒" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">尚勃勒</h3>
+                        <span class="role-badge sentinel">守卫</span>
+                    </div>
+                    <p class="agent-description">来自法国的武器设计师，使用定制武器进行远程狙击。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/chamber_q0.png" alt="猎头">
+                                <span class="ability-key">猎头</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/chamber_q1.png" alt="锚点">
+                                <span class="ability-key">锚点</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/chamber_q2.png" alt="牌局">
+                                <span class="ability-key">牌局</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/chamber_q3.png" alt="狙击">
+                                <span class="ability-key">狙击</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 钢锁 Deadlock -->
+            <div class="agent-card" data-role="sentinel">
+                <div class="agent-image-container">
+                    <img src="images/agents/deadlock.png" alt="钢锁" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">钢锁</h3>
+                        <span class="role-badge sentinel">守卫</span>
+                    </div>
+                    <p class="agent-description">来自挪威的安保专家，使用纳米技术捕获入侵者。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/deadlock_q0.png" alt="传感器">
+                                <span class="ability-key">传感器</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/deadlock_q1.png" alt="陷阱">
+                                <span class="ability-key">陷阱</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/deadlock_q2.png" alt="屏障">
+                                <span class="ability-key">屏障</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/deadlock_q3.png" alt="歼灭">
+                                <span class="ability-key">歼灭</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vyse -->
+            <div class="agent-card" data-role="sentinel">
+                <div class="agent-image-container">
+                    <img src="images/agents/vyse.png" alt="Vyse" class="agent-image">
+                </div>
+                <div class="agent-info">
+                    <div class="agent-header">
+                        <h3 class="agent-name">Vyse</h3>
+                        <span class="role-badge sentinel">守卫</span>
+                    </div>
+                    <p class="agent-description">神秘的金属操控者，使用液态金属制造陷阱和防御工事。</p>
+                    <div class="abilities-section">
+                        <div class="abilities-title">技能</div>
+                        <div class="abilities-grid">
+                            <div class="ability">
+                                <img src="images/agents/abilities/vyse_q0.png" alt="荆棘">
+                                <span class="ability-key">荆棘</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/vyse_q1.png" alt="牢笼">
+                                <span class="ability-key">牢笼</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/vyse_q2.png" alt="弧光">
+                                <span class="ability-key">弧光</span>
+                            </div>
+                            <div class="ability">
+                                <img src="images/agents/abilities/vyse_q3.png" alt="铁幕">
+                                <span class="ability-key">铁幕</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer style="background: var(--bg-secondary); padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div style="text-align: center;">
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">制作人：粥粥</p>
+                <p style="color: var(--text-secondary);">📱 电话: 13728997226 | 💬 微信: lzg805902</p>
+                <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.875rem;">© 2024 无畏契约百科 | 本网站为玩家自制，非官方网站</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 筛选功能脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const agentCards = document.querySelectorAll('.agent-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // 给当前按钮添加active类
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    agentCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-role') === filter) {
+                            card.classList.remove('hidden');
+                            // 添加淡入动画
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                card.style.transition = 'all 0.3s ease';
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 50);
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

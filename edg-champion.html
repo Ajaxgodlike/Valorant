@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDG 2024全球冠军赛夺冠 - Valorant Wiki</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 金色主题样式 */
+        :root {
+            --gold-primary: #ffd700;
+            --gold-secondary: #ffb800;
+            --gold-dark: #b8860b;
+            --gold-light: #ffec8b;
+        }
+
+        .champion-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 70px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1505 50%, #0f1419 100%);
+        }
+
+        .champion-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(255, 184, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 236, 139, 0.05) 0%, transparent 70%);
+        }
+
+        .trophy-icon {
+            font-size: 8rem;
+            margin-bottom: 1rem;
+            animation: trophyGlow 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        @keyframes trophyGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.9)); }
+        }
+
+        .champion-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700 0%, #ffb800 50%, #ffec8b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .champion-subtitle {
+            font-size: 1.5rem;
+            color: var(--gold-light);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .champion-date {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .gold-accent {
+            color: var(--gold-primary);
+        }
+
+        /* 决赛结果区域 */
+        .match-result-section {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .match-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #2a2520 100%);
+            border-radius: 16px;
+            padding: 3rem;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .match-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .match-title {
+            font-size: 1.5rem;
+            color: var(--gold-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .team-display {
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .team-name.winner {
+            color: var(--gold-primary);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .team-name.loser {
+            color: var(--text-secondary);
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--gold-primary);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .vs-text {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .map-result {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .map-result:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .map-result.won {
+            border-color: rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .map-result.lost {
+            border-color: rgba(255, 70, 85, 0.3);
+            background: rgba(255, 70, 85, 0.05);
+        }
+
+        .map-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .map-score {
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .map-score.win {
+            color: var(--gold-primary);
+        }
+
+        .map-score.loss {
+            color: var(--color-primary);
+        }
+
+        /* MVP区域 */
+        .mvp-section {
+            padding: 4rem 0;
+            background: var(--bg-primary);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            color: var(--gold-primary);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .mvp-card {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #2a2520 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.15);
+        }
+
+        .mvp-portrait {
+            width: 200px;
+            height: 200px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid var(--gold-primary);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .mvp-portrait img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mvp-info {
+            flex: 1;
+        }
+
+        .mvp-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+            color: #000;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .mvp-name {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .mvp-realname {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .mvp-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .mvp-stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .mvp-stat-value {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--gold-primary);
+        }
+
+        .mvp-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* 队员卡片 */
+        .roster-section {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .player-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            transition: 0.3s;
+        }
+
+        .player-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.15);
+        }
+
+        .player-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-card) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .player-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .player-role {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .player-role.duelist {
+            background: rgba(255, 70, 85, 0.2);
+            color: var(--duelist);
+        }
+
+        .player-role.controller {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--controller);
+        }
+
+        .player-role.initiator {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--initiator);
+        }
+
+        .player-role.sentinel {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--sentinel);
+        }
+
+        .player-role.flex {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--gold-primary);
+        }
+
+        /* 时间线 */
+        .timeline-section {
+            padding: 4rem 0;
+            background: var(--bg-primary);
+        }
+
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            max-width: 350px;
+            margin-right: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-right: 0;
+            margin-left: 2rem;
+        }
+
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::after {
+            right: auto;
+            left: -8px;
+        }
+
+        .timeline-date {
+            color: var(--gold-primary);
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 历史意义 */
+        .history-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a1505 100%);
+        }
+
+        .history-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .history-text {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .history-highlight {
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .achievement-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--gold-primary);
+        }
+
+        .achievement-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .mvp-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem;
+            }
+
+            .mvp-portrait {
+                width: 150px;
+                height: 150px;
+            }
+
+            .mvp-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+
+            .match-teams {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 50px;
+                padding-right: 0;
+            }
+
+            .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 0;
+                margin-right: 0;
+                max-width: 100%;
+            }
+
+            .timeline-content::after,
+            .timeline-item:nth-child(even) .timeline-content::after {
+                left: -38px;
+                right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">VALORANT WIKI</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="agents.html">英雄</a></li>
+                <li><a href="maps.html">地图</a></li>
+                <li><a href="weapons.html">武器</a></li>
+                <li><a href="meta.html">强势英雄</a></li>
+                <li><a href="edg-champion.html" class="active">EDG夺冠</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="champion-hero">
+        <div class="trophy-icon">🏆</div>
+        <h1 class="champion-title">EDG 2024全球冠军赛夺冠</h1>
+        <p class="champion-subtitle">CN赛区首个世界冠军，创造历史！</p>
+        <p class="champion-date">
+            <span>📅</span>
+            <span>2024年8月25日，首尔</span>
+        </p>
+    </section>
+
+    <!-- 决赛结果 -->
+    <section class="match-result-section">
+        <div class="container">
+            <h2 class="section-title">决赛战况</h2>
+            <div class="match-card">
+                <div class="match-header">
+                    <p class="match-title">2024 VALORANT Champions 总决赛</p>
+                    <p style="color: var(--text-muted);">韩国首尔 INSPIRE Arena</p>
+                </div>
+                <div class="match-teams">
+                    <div class="team-display">
+                        <div class="team-name winner">EDG</div>
+                        <p style="color: var(--text-muted); font-size: 0.875rem;">中国</p>
+                    </div>
+                    <div class="score-display">
+                        <span class="gold-accent">3</span>
+                        <span class="vs-text"> - </span>
+                        <span>2</span>
+                    </div>
+                    <div class="team-display">
+                        <div class="team-name loser">TH</div>
+                        <p style="color: var(--text-muted); font-size: 0.875rem;">Team Heretics</p>
+                    </div>
+                </div>
+                <div class="maps-grid">
+                    <div class="map-result won">
+                        <div class="map-name">日落之城</div>
+                        <div class="map-score win">13 - 11</div>
+                    </div>
+                    <div class="map-result lost">
+                        <div class="map-name">隐世修所</div>
+                        <div class="map-score loss">9 - 13</div>
+                    </div>
+                    <div class="map-result won">
+                        <div class="map-name">莲华古城</div>
+                        <div class="map-score win">15 - 13</div>
+                    </div>
+                    <div class="map-result lost">
+                        <div class="map-name">亚海悬城</div>
+                        <div class="map-score loss">11 - 13</div>
+                    </div>
+                    <div class="map-result won">
+                        <div class="map-name">源工重镇</div>
+                        <div class="map-score win">13 - 9</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MVP区域 -->
+    <section class="mvp-section">
+        <div class="container">
+            <h2 class="section-title">总决赛 MVP</h2>
+            <div class="mvp-card">
+                <div class="mvp-portrait">
+                    <img src="images/agents/jett.png" alt="ZmjjKK">
+                </div>
+                <div class="mvp-info">
+                    <span class="mvp-badge">🏆 MVP</span>
+                    <h3 class="mvp-name">ZmjjKK</h3>
+                    <p class="mvp-realname">郑永康</p>
+                    <div class="mvp-stats">
+                        <div class="mvp-stat">
+                            <div class="mvp-stat-value">1.42</div>
+                            <div class="mvp-stat-label">Rating</div>
+                        </div>
+                        <div class="mvp-stat">
+                            <div class="mvp-stat-value">111</div>
+                            <div class="mvp-stat-label">总击杀</div>
+                        </div>
+                        <div class="mvp-stat">
+                            <div class="mvp-stat-value">+39</div>
+                            <div class="mvp-stat-label">K/D差</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1.5rem; color: var(--text-secondary); font-style: italic;">
+                        "大明星"ZmjjKK以惊人的表现带领EDG走向胜利，成为CN赛区首位世界冠军MVP。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EDG阵容 -->
+    <section class="roster-section">
+        <div class="container">
+            <h2 class="section-title">冠军阵容</h2>
+            <div class="roster-grid">
+                <div class="player-card">
+                    <div class="player-image">
+                        <img src="images/agents/jett.png" alt="ZmjjKK">
+                    </div>
+                    <div class="player-info">
+                        <h3 class="player-name">ZmjjKK</h3>
+                        <span class="player-role duelist">决斗者</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <div class="player-image">
+                        <img src="images/agents/omen.png" alt="CHICHOO">
+                    </div>
+                    <div class="player-info">
+                        <h3 class="player-name">CHICHOO</h3>
+                        <span class="player-role controller">控场者</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <div class="player-image">
+                        <img src="images/agents/breach.png" alt="nobody">
+                    </div>
+                    <div class="player-info">
+                        <h3 class="player-name">nobody</h3>
+                        <span class="player-role initiator">先锋</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <div class="player-image">
+                        <img src="images/agents/raze.png" alt="Smoggy">
+                    </div>
+                    <div class="player-info">
+                        <h3 class="player-name">Smoggy</h3>
+                        <span class="player-role flex">全能</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <div class="player-image">
+                        <img src="images/agents/sage.png" alt="S1Mon">
+                    </div>
+                    <div class="player-info">
+                        <h3 class="player-name">S1Mon</h3>
+                        <span class="player-role sentinel">守卫</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 夺冠时间线 -->
+    <section class="timeline-section">
+        <div class="container">
+            <h2 class="section-title">夺冠之路</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">小组赛阶段</div>
+                        <h4 class="timeline-title">强势开局</h4>
+                        <p class="timeline-desc">EDG以小组第一的身份晋级淘汰赛，展现了强大的统治力。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">八强赛</div>
+                        <h4 class="timeline-title">击败宿敌</h4>
+                        <p class="timeline-desc">2-0战胜LEV，成功复仇，晋级四强。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">半决赛</div>
+                        <h4 class="timeline-title">历史性突破</h4>
+                        <p class="timeline-desc">2-1击败SEN，CN赛区首次闯入世界赛决赛！</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">决赛上半场</div>
+                        <h4 class="timeline-title">激烈交锋</h4>
+                        <p class="timeline-desc">双方战成2-2平，比赛进入决胜图。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">决胜时刻</div>
+                        <h4 class="timeline-title">登顶世界之巅</h4>
+                        <p class="timeline-desc">在源工重镇以13-9击败TH，捧起冠军奖杯！</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 历史意义 -->
+    <section class="history-section">
+        <div class="container">
+            <h2 class="section-title">历史意义</h2>
+            <div class="history-content">
+                <p class="history-text">
+                    EDG的夺冠是<span class="history-highlight">CN FPS电竞的历史性突破</span>。
+                    这是中国大陆战队首次在无畏契约世界赛上夺冠，
+                    标志着CN赛区正式跻身世界顶级行列。
+                    ZmjjKK的MVP表现和整个团队的出色发挥，
+                    向全世界证明了CN选手的实力。
+                </p>
+                <div class="achievements-grid">
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🥇</div>
+                        <h4 class="achievement-title">CN首冠</h4>
+                        <p class="achievement-desc">CN赛区首个无畏契约世界冠军</p>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">⭐</div>
+                        <h4 class="achievement-title">MVP荣耀</h4>
+                        <p class="achievement-desc">ZmjjKK成为首位CN赛区世界冠军MVP</p>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🏆</div>
+                        <h4 class="achievement-title">历史突破</h4>
+                        <p class="achievement-desc">打破欧美队伍对世界冠军的垄断</p>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🌏</div>
+                        <h4 class="achievement-title">世界认可</h4>
+                        <p class="achievement-desc">CN赛区正式跻身世界顶级赛区</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer style="background: var(--bg-secondary); padding: 3rem 0; border-top: 1px solid rgba(255,215,0,0.1);">
+        <div class="container">
+            <div style="text-align: center;">
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--gold-primary); margin-bottom: 0.5rem;">制作人：粥粥</p>
+                <p style="color: var(--text-secondary);">📱 电话: 13728997226 | 💬 微信: lzg805902</p>
+                <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.875rem;">© 2024 无畏契约百科 | 本网站为玩家自制，非官方网站</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

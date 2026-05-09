@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地图战术 - 无畏契约百科</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 地图卡片特定样式 */
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .map-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255,70,85,0.3);
+        }
+
+        .map-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .map-card:hover .map-image img {
+            transform: scale(1.05);
+        }
+
+        .map-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .map-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .sites-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .site-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .site-badge.a { background: rgba(255,70,85,0.2); color: var(--duelist); }
+        .site-badge.b { background: rgba(0,212,170,0.2); color: var(--sentinel); }
+        .site-badge.c { background: rgba(168,85,247,0.2); color: var(--controller); }
+
+        .map-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .tactical-tips {
+            margin-bottom: 1rem;
+        }
+
+        .tactical-tips h4 {
+            font-size: 0.875rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tactical-tips ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tactical-tips li {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .tactical-tips li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .recommended-agents {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .recommended-agents h4 {
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .agent-icons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .agent-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .agent-icon:hover {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .agent-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .maps-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 2rem 0;
+            }
+
+            .map-image {
+                height: 180px;
+            }
+
+            .map-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">VALORANT WIKI</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="agents.html">英雄</a></li>
+                <li><a href="maps.html" class="active">地图</a></li>
+                <li><a href="weapons.html">武器</a></li>
+                <li><a href="meta.html">强势英雄</a></li>
+                <li><a href="edg-champion.html">EDG夺冠</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面头部 -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">地图战术</h1>
+            <p class="page-subtitle">掌握每张地图的点位布局与攻防策略，提升战术意识</p>
+        </div>
+    </header>
+
+    <!-- 地图网格 -->
+    <section class="container">
+        <div class="maps-grid">
+            <!-- 亚海悬城 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/ascent.png" alt="亚海悬城">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">亚海悬城</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于意大利的经典地图，拥有开阔的中路和两个包点。A点有天堂和地狱两个高低差位置，B点则有狭窄的入口。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>中路控制是胜负关键</li>
+                            <li>A点天堂位置可俯瞰整个包点</li>
+                            <li>B点适合使用烟雾封锁入口</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/omen.png" alt="幽影"></div>
+                            <div class="agent-icon"><img src="images/agents/sova.png" alt="猎枭"></div>
+                            <div class="agent-icon"><img src="images/agents/jett.png" alt="捷风"></div>
+                            <div class="agent-icon"><img src="images/agents/killjoy.png" alt="奇乐"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 源工重镇 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/bind.png" alt="源工重镇">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">源工重镇</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于摩洛哥的地图，特色是没有中路，只有单向传送门连接两侧。A点较为开阔，B点有U型弯道。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>善用传送门进行快速转点</li>
+                            <li>A点需要控制浴室和短管</li>
+                            <li>B点U型弯道适合埋伏</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/astra.png" alt="星礈"></div>
+                            <div class="agent-icon"><img src="images/agents/viper.png" alt="蝰蛇"></div>
+                            <div class="agent-icon"><img src="images/agents/raze.png" alt="雷兹"></div>
+                            <div class="agent-icon"><img src="images/agents/cypher.png" alt="零"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 隐世修所 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/haven.png" alt="隐世修所">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">隐世修所</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                            <span class="site-badge c">C点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于不丹的修道院地图，是唯一拥有三个包点的地图。防守方需要分散兵力，进攻方有更多选择。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>三个包点需要合理分配防守</li>
+                            <li>C点较为孤立，容易被夹击</li>
+                            <li>中路窗户可控制多个区域</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/brimstone.png" alt="炼狱"></div>
+                            <div class="agent-icon"><img src="images/agents/breach.png" alt="铁臂"></div>
+                            <div class="agent-icon"><img src="images/agents/chamber.png" alt="尚勃勒"></div>
+                            <div class="agent-icon"><img src="images/agents/sage.png" alt="贤者"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 霓虹町 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/split.png" alt="霓虹町">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">霓虹町</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于日本东京的地图，拥有独特的垂直设计和绳索系统。A点有塔楼高点，B点有多个层次。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>善用绳索快速移动和换位</li>
+                            <li>A点塔楼是必争之地</li>
+                            <li>B点车库需要烟雾掩护</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/viper.png" alt="蝰蛇"></div>
+                            <div class="agent-icon"><img src="images/agents/omen.png" alt="幽影"></div>
+                            <div class="agent-icon"><img src="images/agents/neon.png" alt="霓虹"></div>
+                            <div class="agent-icon"><img src="images/agents/yoru.png" alt="夜露"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 莲华古城 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/lotus.png" alt="莲华古城">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">莲华古城</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                            <span class="site-badge c">C点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于印度的古老遗迹地图，拥有三个包点和可破坏的旋转门。地图设计复杂，战术多变。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>旋转门可快速转点或包抄</li>
+                            <li>A点较为开阔，需要烟雾</li>
+                            <li>C点适合防守方埋伏</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/harbor.png" alt="海神"></div>
+                            <div class="agent-icon"><img src="images/agents/fade.png" alt="黑梦"></div>
+                            <div class="agent-icon"><img src="images/agents/killjoy.png" alt="奇乐"></div>
+                            <div class="agent-icon"><img src="images/agents/raze.png" alt="雷兹"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 森寒冬港 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/icebox.png" alt="森寒冬港">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">森寒冬港</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于北极的科研设施地图，拥有大量垂直空间和滑索。A点有多层结构，B点较为紧凑。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>垂直空间丰富，注意上方</li>
+                            <li>A点需要控制管道和天堂</li>
+                            <li>B点适合近距离作战</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/viper.png" alt="蝰蛇"></div>
+                            <div class="agent-icon"><img src="images/agents/sova.png" alt="猎枭"></div>
+                            <div class="agent-icon"><img src="images/agents/jett.png" alt="捷风"></div>
+                            <div class="agent-icon"><img src="images/agents/sage.png" alt="贤者"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 微风岛屿 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/breeze.png" alt="微风岛屿">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">微风岛屿</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于加勒比海的岛屿地图，是目前最大的地图，拥有开阔的长距离交战区域。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>长距离交战，狙击枪有优势</li>
+                            <li>A点需要控制中路和A大厅</li>
+                            <li>B点有多个入口需要防守</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/chamber.png" alt="尚勃勒"></div>
+                            <div class="agent-icon"><img src="images/agents/viper.png" alt="蝰蛇"></div>
+                            <div class="agent-icon"><img src="images/agents/kayo.png" alt="K/O"></div>
+                            <div class="agent-icon"><img src="images/agents/skye.png" alt="斯凯"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日落之城 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/sunset.png" alt="日落之城">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">日落之城</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于美国洛杉矶的地图，设计平衡，适合各种战术风格。A点较为紧凑，B点更加开阔。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>中路控制可快速支援两侧</li>
+                            <li>A点适合快攻战术</li>
+                            <li>B点需要控制市场区域</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/omen.png" alt="幽影"></div>
+                            <div class="agent-icon"><img src="images/agents/gekko.png" alt="盖可"></div>
+                            <div class="agent-icon"><img src="images/agents/deadlock.png" alt="钢锁"></div>
+                            <div class="agent-icon"><img src="images/agents/reyna.png" alt="芮娜"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 深海明珠 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/pearl.png" alt="深海明珠">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">深海明珠</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于葡萄牙里斯本的水下城市地图，拥有独特的地下通道和开放的中路。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>中路是必争之地</li>
+                            <li>地下通道可用于偷袭</li>
+                            <li>A点较为开阔，B点有更多掩体</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/harbor.png" alt="海神"></div>
+                            <div class="agent-icon"><img src="images/agents/fade.png" alt="黑梦"></div>
+                            <div class="agent-icon"><img src="images/agents/astra.png" alt="星礈"></div>
+                            <div class="agent-icon"><img src="images/agents/jett.png" alt="捷风"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 裂变峡谷 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/fracture.png" alt="裂变峡谷">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">裂变峡谷</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于美国的秘密研究设施地图，采用独特的H型设计，防守方出生在地图中央。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>防守方在中央可快速支援两侧</li>
+                            <li>A点和B点都有多个入口</li>
+                            <li>绳索可快速转点</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/brimstone.png" alt="炼狱"></div>
+                            <div class="agent-icon"><img src="images/agents/breach.png" alt="铁臂"></div>
+                            <div class="agent-icon"><img src="images/agents/chamber.png" alt="尚勃勒"></div>
+                            <div class="agent-icon"><img src="images/agents/neon.png" alt="霓虹"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 幽邃地窟 -->
+            <div class="map-card">
+                <div class="map-image">
+                    <img src="images/maps/abyss.png" alt="幽邃地窟">
+                </div>
+                <div class="map-content">
+                    <div class="map-header">
+                        <h3 class="map-title">幽邃地窟</h3>
+                        <div class="sites-badges">
+                            <span class="site-badge a">A点</span>
+                            <span class="site-badge b">B点</span>
+                        </div>
+                    </div>
+                    <p class="map-description">位于地下深处的神秘地图，拥有独特的无底深渊机制，掉落即死亡。地图设计紧凑，交战频繁。</p>
+                    <div class="tactical-tips">
+                        <h4>战术要点</h4>
+                        <ul>
+                            <li>注意边缘，掉落深渊即死亡</li>
+                            <li>地图紧凑，适合快攻</li>
+                            <li>利用垂直空间进行包抄</li>
+                        </ul>
+                    </div>
+                    <div class="recommended-agents">
+                        <h4>推荐特工</h4>
+                        <div class="agent-icons">
+                            <div class="agent-icon"><img src="images/agents/iso.png" alt="壹决"></div>
+                            <div class="agent-icon"><img src="images/agents/clove.png" alt="暮蝶"></div>
+                            <div class="agent-icon"><img src="images/agents/vyse.png" alt="维斯"></div>
+                            <div class="agent-icon"><img src="images/agents/tejo.png" alt="钛狐"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer style="background: var(--bg-secondary); padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div style="text-align: center;">
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">制作人：粥粥</p>
+                <p style="color: var(--text-secondary);">📱 电话: 13728997226 | 💬 微信: lzg805902</p>
+                <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.875rem;">© 2024 无畏契约百科 | 本网站为玩家自制，非官方网站</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
